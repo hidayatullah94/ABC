@@ -1,0 +1,362 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+//MASTER
+
+model kategori {
+  id                  Int                  @id @default(autoincrement())
+  nama                String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  part                part[]
+}
+
+model bengkel {
+  id                  Int                  @id @default(autoincrement())
+  nama                String
+  telp                String
+  alamat              String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  spk                 spk[]
+}
+
+model cabang {
+  id                  Int                  @id @default(autoincrement())
+  nama                String
+  telp                String
+  keterangan          String
+  alamat              String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  unit                unit[]
+  users               users[]
+  servis              servis[]
+}
+
+model part {
+  id                  Int                  @id @default(autoincrement())
+  nama                String
+  kategori_id         Int
+  no_pol              Int
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  kategori            kategori             @relation(fields: [kategori_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  unit                unit                 @relation(fields: [no_pol], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+}
+
+enum users_role {
+  USER
+  ADMIN
+  MANAGER
+  DIREKSI
+}
+
+model users {
+  id                  Int                  @id @default(autoincrement())
+  nama                String
+  nik                 String               @unique
+  hp                  String
+  jabatan             String?
+  password            String
+  url                 String?
+  cabang_id           Int
+  role                users_role
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  cabang              cabang               @relation(fields: [cabang_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  apv_lk              apv_lk[]
+  apv_spk             apv_spk[]
+  lk                  lk[]
+  spk                 spk[]
+  servis              servis[]
+  pembayaran_leasing  pembayaran_leasing[]
+ 
+
+
+}
+
+model unit {
+  id                  Int                  @id @default(autoincrement())
+  no_pol              String               @unique
+  jenis_kendaraan     String
+  nama_pemilik        String
+  type_tahun          String
+  no_lambung          String
+  no_rangka           String
+  no_mesin            String
+  asuransi            String
+  url                 String
+  cabang_id           Int
+  status              Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  cabang              cabang               @relation(fields: [cabang_id], references: [id],onDelete: Cascade,onUpdate: Cascade)
+  lk                  lk[]
+  part                part[]
+ 
+  unitleasing         unit_leasing[]
+ 
+
+}
+
+//PROCESS
+//LK START RELATIONAL
+model lk {
+  id                  Int                  @id @default(autoincrement())
+  kilometer           Int
+  status              Boolean              @default(false)
+  status_spk          Boolean              @default(false)
+  createdAt           DateTime             @default(now()) 
+  updatedAt           DateTime             @updatedAt
+  user_id             Int
+  no_pol              Int      
+  unit                unit                 @relation(fields: [no_pol], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  users               users                @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  apv_lk              apv_lk[]
+  detailkerusakan     detailkerusakan[]
+
+
+
+}
+
+model detailkerusakan {
+  id                 Int                   @id  @default(autoincrement())
+  kerusakan          String
+  sebab              String 
+  createdAt          DateTime              @default(now()) 
+  updatedAt          DateTime              @updatedAt 
+
+  //relasi                     
+  lk_id              Int
+  lk                 lk                    @relation(fields: [lk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+}
+
+
+//END RELATIONAL
+model apv_lk {
+  id                  Int                  @id @default(autoincrement())
+  user_id             Int
+  lk_id               Int                        
+  status              Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  lk                  lk                   @relation(fields: [lk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  users               users                @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  spk                 spk[]
+
+
+}
+
+model spk {
+  id                  Int                  @id @default(autoincrement())
+  user                String
+  alamat              String
+  alamat_bengkel      String?
+  catatan             String
+  prihal              String
+  no_lk               String
+  status              Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  user_id             Int
+  bengkel_id          Int
+  apvlk_id            Int                        
+  apv_lk              apv_lk               @relation(fields: [apvlk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  bengkel             bengkel              @relation(fields: [bengkel_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  users               users                @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  apv_spk             apv_spk[]
+  detailservis        detailservis[]
+}
+
+model detailservis {
+  id                  Int                  @id  @default(autoincrement())
+  servis              String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  //relasi
+  spk_id              Int
+  spk                 spk        @relation(fields: [spk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+}
+
+model apv_spk {
+  id                  Int                  @id @default(autoincrement())
+  user_id             Int
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  status              Boolean              @default(false)
+  spk_id              Int                  @unique       
+  spk                 spk                  @relation(fields: [spk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  users               users                @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  //relasi
+  servis              servis[]
+
+
+}
+
+
+model servis{
+  id                   Int                   @id @default(autoincrement())
+  no_pol               String
+  no_spk               String
+  jenis_kendaraan      String
+  kilometer            String
+  type_tahun           String
+  bengkel              String
+  total                Int
+  img                  String
+  url                  String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  //relasi
+  cabang_id            Int
+  apvspk_id            Int                    @unique                        
+  user_id              Int
+  cabang               cabang                 @relation(fields: [cabang_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  apv_spk              apv_spk                @relation(fields: [apvspk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  users                users                  @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  detailpart           detailpart[]
+  servisplus           servisplus[]
+
+}
+
+
+model detailpart {
+  id                   Int                    @id @default(autoincrement())
+  nama                 String
+  qty                  Int
+  harga                Int
+  total_harga          Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  //relasi
+  servis_id            Int
+  servis               servis                 @relation(fields: [servis_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+
+}
+
+model servisplus{
+  id                   Int                    @id @default(autoincrement()) 
+  keterangan           String
+  harga                Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  //relasi
+  servis_id            Int
+  servis               servis                 @relation(fields: [servis_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+}
+
+model leasing {
+  id                   Int                    @default(autoincrement())  @id
+  nama                 String                 @unique
+  alamat               String
+  telp                 String
+  nama_bank            String
+  no_rekening          Int
+  status               Boolean                @default(true)
+  created              String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  //relasi
+
+  unitleasing          unit_leasing[]
+  pembayaranleasing    pembayaran_leasing[]
+ 
+}
+
+
+
+
+
+model jenis_tahapan {
+  id                  Int                   @default(autoincrement()) @id
+  nama                String                @unique
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  unitleasing         unit_leasing[]
+  pembayaran          pembayaran_leasing[]
+
+}
+
+model pembayaran_leasing {
+  id                  Int                   @default(autoincrement()) @id
+  tahapan_id          Int
+  leasing_id          Int                   
+  total               Int
+  user_id             Int
+  app1                String?
+  ttd1                String?
+  app2                String
+  status              Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt 
+  leasing             leasing               @relation(fields: [leasing_id], references: [id], onDelete: Cascade, onUpdate: Cascade)    
+  tahapan             jenis_tahapan         @relation(fields: [tahapan_id], references: [id], onDelete: Cascade,onUpdate: Cascade) 
+  detailleasing       detail_leasing[]   
+  users               users                 @relation(fields: [user_id], references: [id], onDelete: Cascade,onUpdate: Cascade)                     
+}
+
+
+
+model detail_leasing {
+  id                  Int                   @default(autoincrement()) @id
+  unit_id             Int
+  no_pol              String
+  va                  Int
+  rekening            String
+  cabang              String
+  kontrak             String
+  tempo               String
+  tenor               Int
+  angsuranke          Int
+  sisa_angsuran       Int
+  angsuran_perbulan   Int
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt 
+  pembayarn_id        Int
+  unit                unit_leasing          @relation(fields: [unit_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pembayaran          pembayaran_leasing    @relation(fields: [pembayarn_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+}
+
+model unit_leasing {
+  id                 Int                   @default(autoincrement()) @id
+  kontrak            String 
+  tenor              Int
+  angsuran_perbulan  Int
+  angsuranke         Int
+  sisa_angsuran      Int
+  va                 Int
+  tempo              DateTime
+  tahap_tempo        DateTime              
+  harga_beli         Int
+  dp_unit            Int
+  status             Boolean               @default(false)
+  created            String
+  unit_id            Int                   @unique
+  leasing_id         Int                   
+  tahapan_id         Int                   
+  unit               unit                  @relation(fields: [unit_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  leasing            leasing               @relation(fields: [leasing_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tahapan            jenis_tahapan         @relation(fields: [tahapan_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  detailLeasing      detail_leasing[]
+}
+
+
+

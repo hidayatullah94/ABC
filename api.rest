@@ -1,0 +1,22 @@
+###
+POST http://localhost:5000/user/generatetoken
+
+
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lX2FwcCI6InVzZXJzIiwidXNlcl9pZCI6MTEsIm5payI6IkNQSTEwIiwiaWF0IjoxNjY3ODcxMTE5LCJleHAiOjE2Njc5NTc1MTl9.SbTt_OujubsY6CYgRDYnhpMDdwj_UmyMyDHadDLqY8U
+Content-Type: application/json
+
+
+
+###
+POST http://localhost:5000/lk
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lX2FwcCI6ImNyZWF0ZSB1c2VyIiwidXNlcl9pZCI6MjcsIm5payI6IkNQSTk5IiwiaWF0IjoxNjY4MjQ4NTE1LCJleHAiOjE2NjgzMzQ5MTV9.vf1iY5xG4TqBq0twFPrpcdkqIMaDDrmV7ezNbn7-wEw
+
+
+{
+    "kilometer":6000,
+    "kerusakan":"service rutin",
+    "sebab_kerusakan":"pemakaian rutin",
+    "no_pol":5
+}
+
