@@ -1,19 +1,8 @@
-const name = async (req = request, res = response) => {
-  try {
-  } catch (error) {
-    res.status(500).json({
-      succes: false,
-      error: error.message,
-    });
-  }
-};
-
-const get = async (req = request, res = response) => {
-  try {
-  } catch (error) {
-    res.status(500).json({
-      succes: false,
-      error: error.message,
-    });
-  }
-};
+const express = require("express");
+const name = express.Router();
+name.post("/");
+name.get("/");
+name.get("/:id");
+name.put("/:id");
+name.delete("/:id");
+module.exports = name;
