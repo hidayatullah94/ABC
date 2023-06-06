@@ -265,7 +265,16 @@ const getDetail_SPK = async (req = request, res = response) => {
               select: {
                 id: true,
                 kilometer: true,
-
+                detailkerusakan: true,
+                createdAt: true,
+                status: true,
+                users: {
+                  select: {
+                    nama: true,
+                    url: true,
+                    jabatan: true,
+                  },
+                },
                 unit: {
                   select: {
                     id: true,
