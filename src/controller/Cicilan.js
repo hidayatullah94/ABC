@@ -515,7 +515,19 @@ const app_pembayaran = async (req = request, res = response) => {
         id: Number(id),
       },
       data: {
+        app1: user_name,
+        ttd1: ttd,
         status: true,
+        detailleasing: {
+          updateMany: {
+            where: {
+              pembayarn_id: Number(id),
+            },
+            data: {
+              status: true,
+            },
+          },
+        },
       },
     });
     res.status(201).json({

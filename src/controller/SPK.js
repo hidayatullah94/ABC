@@ -100,6 +100,7 @@ const getall_SPK = async (req = request, res = response) => {
                   select: {
                     no_pol: true,
                     jenis_kendaraan: true,
+                    cabang: true,
                   },
                 },
               },
@@ -268,6 +269,7 @@ const getDetail_SPK = async (req = request, res = response) => {
                 detailkerusakan: true,
                 createdAt: true,
                 status: true,
+                bukti_lk: true,
                 users: {
                   select: {
                     nama: true,

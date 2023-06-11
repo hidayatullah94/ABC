@@ -230,6 +230,7 @@ const getDetail_service = async (req = request, res = response) => {
                       include: {
                         detailkerusakan: true,
                         unit: true,
+                        bukti_lk: true,
                         users: {
                           select: {
                             id: true,

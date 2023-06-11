@@ -126,18 +126,24 @@ model lk {
   users               users                @relation(fields: [user_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
   apv_lk              apv_lk[]
   detailkerusakan     detailkerusakan[]
+  bukti_lk            bukti_lk[]
 
 
+}
 
+model bukti_lk {
+  id                 Int                   @default(autoincrement()) @id
+  url                String               
+  lk_id              Int
+  lk                 lk                    @relation(fields: [lk_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model detailkerusakan {
   id                 Int                   @id  @default(autoincrement())
   kerusakan          String
-  sebab              String 
+  sebab              String
   createdAt          DateTime              @default(now()) 
   updatedAt          DateTime              @updatedAt 
-
   //relasi                     
   lk_id              Int
   lk                 lk                    @relation(fields: [lk_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
@@ -327,6 +333,7 @@ model detail_leasing {
   angsuranke          Int
   sisa_angsuran       Int
   angsuran_perbulan   Int
+  status              Boolean               @default(false)
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt 
   pembayarn_id        Int
