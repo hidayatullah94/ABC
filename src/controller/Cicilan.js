@@ -381,6 +381,12 @@ const getAll_Cicilan = async (req = request, res = response) => {
       include: {
         tahapan: true,
         leasing: true,
+        unit: {
+          select: {
+            no_pol: true,
+            jenis_kendaraan: true,
+          },
+        },
       },
     });
     res.status(200).json({

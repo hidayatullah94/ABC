@@ -1,11 +1,10 @@
 const express = require("express");
 const {
-	create_cabang,
-	update_cabang,
-	detail_cabang,
-	get_cabang,
-	delete_cabang,
-	getList_cabang,
+  create_cabang,
+  update_cabang,
+  detail_cabang,
+  get_cabang,
+  getList_cabang,
 } = require("../controller/Cabang");
 
 //route cabang
@@ -15,5 +14,5 @@ CabangRoute.put("/cabang/:id", update_cabang);
 CabangRoute.get("/cabang/:id", detail_cabang);
 CabangRoute.get("/cabang", get_cabang);
 CabangRoute.get("/cabangs", getList_cabang);
-CabangRoute.delete("/cabang/:id", delete_cabang);
+
 module.exports = CabangRoute;

@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Unit } = require("../../prisma/conn");
+const { Unit, Cabang } = require("../../prisma/conn");
 const path = require("path");
 
 //? get all post unit for ADMIN | MGR//create post unit
@@ -147,42 +147,44 @@ const detail_unit = async (req = request, res = response) => {
 //get all
 const get_unit = async (req = request, res = response) => {
   try {
-    const { limit, page } = await req.query;
-    const { Role } = await req.body;
-    const skip = (page - 1) * limit;
+    const { cabang, pemilik } = await req.query;
 
-    if (Role === "MANAGER" || Role === "ADMIN") {
-      const getData = await Unit.findMany({
-        orderBy: [
+    //findcabang
+    const cabangs = await Cabang.findMany();
+    //find unit
+    const unit = await Unit.findMany();
+    const Pemilik = unit.map((e) => e.nama_pemilik);
+    const resultPemilik = [...new Set(Pemilik)];
+
+    const resultCabang = cabangs.map((e) => e.id);
+    const getData = await Unit.findMany({
+      where: {
+        AND: [
           {
-            cabang_id: "asc",
+            cabang_id: cabang === "All" ? { in: resultCabang } : Number(cabang),
           },
           {
-            jenis_kendaraan: "asc",
+            nama_pemilik: pemilik === "All" ? { in: resultPemilik } : pemilik,
           },
         ],
-        skip: parseInt(skip),
-        take: parseInt(limit),
-        include: {
-          cabang: {
-            select: {
-              nama: true,
-              telp: true,
-              alamat: true,
-            },
+      },
+
+      include: {
+        cabang: {
+          select: {
+            nama: true,
+            telp: true,
+            alamat: true,
           },
         },
-      });
-      const countPages = await Unit.count();
-      res.status(200).json({
-        succes: true,
-        message: "Data berhasil ditampilkan",
-        current_page: parseInt(page),
-        total_data: countPages,
-        total_page: Math.ceil(countPages / limit),
-        query: getData,
-      });
-    }
+      },
+    });
+
+    res.status(200).json({
+      succes: true,
+      message: "Data berhasil ditampilkan",
+      query: getData,
+    });
   } catch (error) {
     res.status(500).json({
       succes: false,
@@ -195,6 +197,12 @@ const get_unit = async (req = request, res = response) => {
 const getListAll_unit = async (req = request, res = response) => {
   try {
     const getlistUnitall = await Unit.findMany({
+      where: {
+        aktif: true,
+      },
+      orderBy: {
+        no_pol: "asc",
+      },
       select: {
         no_pol: true,
         id: true,
@@ -214,29 +222,15 @@ const getListAll_unit = async (req = request, res = response) => {
   }
 };
 
-//delete unit
-const delete_unit = async (req = request, res = response) => {
-  try {
-    const { id } = await req.params;
-    const deleteUnit = await Unit.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-    res.status(200).json({
-      succes: true,
-      message: "Data berhasil dihapus",
-    });
-  } catch (error) {
-    res.status(500).json({
-      succes: false,
-      error: error.message,
-    });
-  }
-};
 const getUnit_part = async (req = request, res = response) => {
   try {
     const getpartUnit = await Unit.findMany({
+      where: {
+        aktif: true,
+      },
+      orderBy: {
+        no_pol: "asc",
+      },
       select: {
         no_pol: true,
         id: true,
@@ -342,7 +336,14 @@ const getLis_unit = async (req = request, res = response) => {
     const { cabang_id } = await req.body;
     const getlistUnit = await Unit.findMany({
       where: {
-        cabang_id: Number(cabang_id),
+        AND: [
+          {
+            cabang_id: Number(cabang_id),
+          },
+          {
+            aktif: true,
+          },
+        ],
       },
       select: {
         no_pol: true,
@@ -371,11 +372,18 @@ const unit_Leasing = async (req = request, res = response) => {
     const resultUnit = unit.map((e) => e.id);
     const getDataUnit = await Unit.findMany({
       where: {
-        unitleasing: {
-          none: {
-            unit_id: { in: resultUnit },
+        AND: [
+          {
+            unitleasing: {
+              none: {
+                unit_id: { in: resultUnit },
+              },
+            },
           },
-        },
+          {
+            aktif: true,
+          },
+        ],
       },
       orderBy: {
         no_pol: "asc",
@@ -403,7 +411,6 @@ module.exports = {
   detail_unit,
   get_unit,
   getLis_unit,
-  delete_unit,
   getListAll_unit,
   get_unitUser,
   getUnit_part,

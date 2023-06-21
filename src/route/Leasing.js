@@ -16,6 +16,5 @@ Leasing_Route.get("/getall-leasing", getAll_Leasing);
 Leasing_Route.get("/getdetail-leasing/:id", getByID_Leasing);
 Leasing_Route.get("/list-leasing", list_Leasing);
 Leasing_Route.put("/update-leasing/:id", checkToken, update_Leasing);
-// Route_Leasing.put("/nonactive-leasing/:id", nonActive_Leasing);
 
 module.exports = Leasing_Route;

@@ -103,7 +103,7 @@ const get_LK = async (req = request, res = response) => {
   } catch (error) {
     res.status(500).json({
       succes: false,
-      error: error.message,
+      error: error.stack,
     });
   }
 };

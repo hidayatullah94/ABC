@@ -116,40 +116,18 @@ const update_Leasing = async (req = request, res = response) => {
     });
   }
 };
-// //non active data
-// const nonActive_Leasing = async (req = request, res = response) => {
-//   try {
-//     const { id } = await req.params;
-//     const nonActive = await Leasing.update({
-//       where: {
-//         id: parseInt(id),
-//       },
-//       data: {
-//         status: false,
-//       },
-//     });
-//     res.status(201).json({
-//       succes: true,
-//       message: "Data berhasil di non active kan",
-//       query: nonActive,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       succes: false,
-//       error: error.message,
-//     });
-//   }
-// };
 
 //list Leasing
 const list_Leasing = async (req = request, res = response) => {
   try {
     const getList = await Leasing.findMany({
+      where: {
+        status: true,
+      },
       select: {
         id: true,
         nama: true,
         nama_bank: true,
-        status: true,
       },
     });
     res.status(200).json({
@@ -171,5 +149,5 @@ module.exports = {
   getByID_Leasing,
   update_Leasing,
   list_Leasing,
-  //   nonActive_Leasing,
+ 
 };

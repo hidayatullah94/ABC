@@ -26,6 +26,7 @@ model bengkel {
   nama                String
   telp                String
   alamat              String
+  status              Boolean             @default(true)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   spk                 spk[]
@@ -42,6 +43,8 @@ model cabang {
   unit                unit[]
   users               users[]
   servis              servis[]
+  status              Boolean             @default(true)
+ 
 }
 
 model part {
@@ -73,6 +76,7 @@ model users {
   url                 String?
   cabang_id           Int
   role                users_role
+  status              Boolean              @default(true)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   cabang              cabang               @relation(fields: [cabang_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
@@ -99,6 +103,7 @@ model unit {
   asuransi            String
   url                 String
   cabang_id           Int
+  aktif               Boolean              @default(true)
   status              Boolean              @default(true)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
@@ -115,7 +120,7 @@ model unit {
 //LK START RELATIONAL
 model lk {
   id                  Int                  @id @default(autoincrement())
-  kilometer           Int
+  kilometer           Int             
   status              Boolean              @default(false)
   status_spk          Boolean              @default(false)
   createdAt           DateTime             @default(now()) 

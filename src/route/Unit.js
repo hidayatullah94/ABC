@@ -5,7 +5,6 @@ const {
   detail_unit,
   get_unit,
   getLis_unit,
-  delete_unit,
   getListAll_unit,
   get_unitUser,
   getUnit_part,
@@ -29,7 +28,6 @@ UnitRoute.get("/unitss", checkToken, get_unitUser);
 UnitRoute.get("/units", checkToken, getLis_unit);
 
 UnitRoute.get("/unit/:id", detail_unit);
-UnitRoute.delete("/unit/:id", delete_unit);
 UnitRoute.get("/unit-leasing", unit_Leasing);
 
 module.exports = UnitRoute;
